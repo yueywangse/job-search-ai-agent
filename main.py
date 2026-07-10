@@ -1,21 +1,59 @@
 from resume_extractor import ResumeExtractor
 from resume_parser import ResumeParser
-from utils import save_json
-from config import RESUME_FILE, RESUME_JSON
+from job_extractor import JobExtractor
+from skill_matcher import SkillMatcher
+from utils import save_json, get_job_description, print_match
+from config import RESUME_FILE, RESUME_JSON, MATCH_JSON, USE_CACHED_RESUME
+from pathlib import Path
+from resume import Resume
+from utils import load_json
 
+parser = ResumeParser()
+resume_extractor = ResumeExtractor()
+job_extractor = JobExtractor()
+matcher = SkillMatcher()
 
 def main():
-    parser = ResumeParser()
-    extractor = ResumeExtractor()
-    resume_text = parser.extract_text(RESUME_FILE)
-    resume = extractor.extract(resume_text)
-    save_json(
-        resume.model_dump(),
-        RESUME_JSON
-    )
+    if USE_CACHED_RESUME and Path(RESUME_JSON).exists():
+        print("Loading cached resume...")
+
+        resume = Resume.model_validate(
+            load_json(RESUME_JSON)
+        )
+    else:
+        print("Extracting resume...")
+
+        resume_text = parser.extract_text(RESUME_FILE)
+        resume = resume_extractor.extract(resume_text)
+        save_json(
+            resume.model_dump(),
+            RESUME_JSON
+        )
 
     print("Resume analyzed successfully!")
     print("Saved to outputs/resume.json")
+    
+    print("Getting job description...")
+    job_text = get_job_description()
+    
+    print("Extracting job...")
+    job = job_extractor.extract(job_text)
+    
+    print("Matching...")
+    result = matcher.match(
+        resume,
+        job
+    )
+    
+    print("Saving...")
+    save_json(
+        result.model_dump(),
+        MATCH_JSON
+    )
+    
+    print("Done!")
+
+    print_match(result)
 
 if __name__ == "__main__":
     main()

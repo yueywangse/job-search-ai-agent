@@ -1,7 +1,7 @@
 import json
 
 from llm import LLM
-from models import Resume
+from resume import Resume
 from prompts import RESUME_ANALYSIS_PROMPT
 
 
@@ -19,6 +19,5 @@ class ResumeExtractor:
         )
 
         data = json.loads(response)
-        resume = Resume.model_validate(data)
         
-        return resume
+        return Resume.model_validate(data)

@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from ollama import chat
 from config import OLLAMA_MODEL
 
+
 class LLM:
     def __init__(self, model=OLLAMA_MODEL):
         self.model = model
@@ -19,10 +20,17 @@ class LLM:
                     "role": "user",
                     "content": prompt
                 }
-            ]
+            ],
+            "think": False,
+            "options": {
+                "temperature": 0
+            }
         }
+
         if schema is not None:
             kwargs["format"] = schema.model_json_schema()
+            
+        print(f"Prompt length: {len(prompt)} characters")
         response = chat(**kwargs)
 
         return response.message.content
