@@ -2,3 +2,4 @@ ollama
 pypdf
 python-docx
 rich
+pydantic
