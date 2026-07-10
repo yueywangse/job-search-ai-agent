@@ -1,14 +1,10 @@
-from llm import LLM
+from resume import ResumeParser
 
 def main():
-    llm = LLM()
+    parser = ResumeParser()
+    resume = parser.extract_text("resume.pdf")
+    print(resume)
 
-    while True:
-        prompt = input("\nYou: ")
-        if prompt.lower() in ["exit", "quit"]:
-            break
-        response = llm.generate(prompt)
-        print(f"\nAssistant:\n{response}")
 
 if __name__ == "__main__":
     main()
