@@ -2,8 +2,8 @@ from resume_extractor import ResumeExtractor
 from resume_parser import ResumeParser
 from job_extractor import JobExtractor
 from skill_matcher import SkillMatcher
-from utils import save_json, get_job_description, print_match, print_analysis
-from config import RESUME_FILE, RESUME_JSON, MATCH_JSON, USE_CACHED_RESUME, ANALYZE_JSON
+from utils import save_json, get_job_description, print_match, print_analysis, save_analysis_markdown
+from config import RESUME_FILE, RESUME_JSON, MATCH_JSON, USE_CACHED_RESUME, ANALYZE_JSON, ANALYSIS_MD
 from pathlib import Path
 from resume import Resume
 from utils import load_json
@@ -66,6 +66,11 @@ def main():
     save_json(
         analysis.model_dump(),
         ANALYZE_JSON
+    )
+    
+    save_analysis_markdown(
+        analysis,
+        ANALYSIS_MD
     )
     
     print("Done!")

@@ -57,6 +57,27 @@ def print_analysis(analysis: MatchAnalysis):
     for risk in (analysis.interview_risks):
         print(f"{risk}")
         
+def save_analysis_markdown(analysis, path: str):
+    with open(path, "w", encoding="utf-8") as f:
+        f.write("# Match Analysis\n\n")
+        f.write("## Summary\n\n")
+        f.write(f"{analysis.summary}\n\n")
+        f.write("## Strengths\n\n")
+        for strength in analysis.strengths:
+            f.write(f"- {strength}\n")
+        f.write("\n")
+        f.write("## Gaps\n\n")
+        for gap in analysis.gaps:
+            f.write(f"- {gap}\n")
+        f.write("\n")
+        f.write("## Resume Improvements\n\n")
+        for improvement in analysis.resume_improvements:
+            f.write(f"- {improvement}\n")
+        f.write("\n")
+        f.write("## Interview Risk\n\n")
+        for risk in analysis.interview_risks:
+            f.write(f"- {risk}\n")
+        
 def load_json(path: str) -> dict:
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)

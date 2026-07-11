@@ -9,5 +9,6 @@ RESUME_FILE = f"{INPUT_DIR}/resume.pdf"
 RESUME_JSON = f"{OUTPUT_DIR}/resume.json"
 MATCH_JSON = f"{OUTPUT_DIR}/match.json"
 ANALYZE_JSON = f"{OUTPUT_DIR}/analyze.json"
+ANALYSIS_MD = f"{OUTPUT_DIR}/analysis.md"
 
 USE_CACHED_RESUME = True # Set to false to override old resume.json
