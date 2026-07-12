@@ -1,19 +1,22 @@
+import json
 from resume_extractor import ResumeExtractor
 from resume_parser import ResumeParser
 from job_extractor import JobExtractor
 from skill_matcher import SkillMatcher
 from utils import save_json, get_job_description, print_match, print_analysis, save_analysis_markdown
-from config import RESUME_FILE, RESUME_JSON, MATCH_JSON, USE_CACHED_RESUME, ANALYZE_JSON, ANALYSIS_MD
+from config import RESUME_FILE, RESUME_JSON, MATCH_JSON, USE_CACHED_RESUME, ANALYZE_JSON, ANALYSIS_MD, TAILOR_JSON
 from pathlib import Path
 from resume import Resume
 from utils import load_json
 from match_analyzer import MatchAnalyzer
+from resume_tailor import ResumeTailor
 
 parser = ResumeParser()
 resume_extractor = ResumeExtractor()
 job_extractor = JobExtractor()
 matcher = SkillMatcher()
 analyzer = MatchAnalyzer()
+tailor = ResumeTailor()
 
 def main():
     if USE_CACHED_RESUME and Path(RESUME_JSON).exists():
@@ -73,9 +76,35 @@ def main():
         ANALYSIS_MD
     )
     
+    print_analysis(analysis)
+    
+    tailor_context = {
+        "matching_skills": result.matching_skills,
+        "missing_skills": result.missing_skills,
+        "summary": analysis.summary,
+    }
+    
+    tailor_context_json = json.dumps(
+        tailor_context,
+        indent=2
+    )
+    
+    print("Tailoring")
+    tailored_resume  = tailor.tailor(
+        resume,
+        job,
+        tailor_context_json
+    )
+    
+    print("Saving...")
+    save_json(
+        tailored_resume .model_dump(),
+        TAILOR_JSON
+    )
+    
     print("Done!")
 
-    print_analysis(analysis)
+    print(tailored_resume.model_dump_json(indent=4))
 
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ class Experience(BaseModel):
 
 class Project(BaseModel):
     title: str
-    description: str
+    bullet_points: list[str]
 
 class Resume(BaseModel):
     name: str

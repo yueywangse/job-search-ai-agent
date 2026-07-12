@@ -10,5 +10,6 @@ RESUME_JSON = f"{OUTPUT_DIR}/resume.json"
 MATCH_JSON = f"{OUTPUT_DIR}/match.json"
 ANALYZE_JSON = f"{OUTPUT_DIR}/analyze.json"
 ANALYSIS_MD = f"{OUTPUT_DIR}/analysis.md"
+TAILOR_JSON = f"{OUTPUT_DIR}/tailor.json"
 
 USE_CACHED_RESUME = True # Set to false to override old resume.json
