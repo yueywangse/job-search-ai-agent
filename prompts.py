@@ -167,6 +167,10 @@ Rules
 - Do not use placeholders such as "[Your Name]".
 - Avoid subjective or promotional language such as "world-class", "highest standards", or "best-in-class".
 - Do not imply domain expertise that is not explicitly supported by the resume.
+- Describe experience as transferable rather than directly applicable unless the resume explicitly demonstrates experience in that domain.
+- Treat all education exactly as presented in the supplied resume.
+- Do not describe completed degrees as "current" or "ongoing."
+- Describe experience as transferable rather than directly applicable unless the resume explicitly demonstrates experience in that domain.
 
 Resume
 
