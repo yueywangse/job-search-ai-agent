@@ -10,6 +10,7 @@ from resume import Resume
 from utils import load_json
 from match_analyzer import MatchAnalyzer
 from resume_tailor import ResumeTailor
+from resume_builder import ResumeBuilder
 
 parser = ResumeParser()
 resume_extractor = ResumeExtractor()
@@ -17,6 +18,7 @@ job_extractor = JobExtractor()
 matcher = SkillMatcher()
 analyzer = MatchAnalyzer()
 tailor = ResumeTailor()
+builder = ResumeBuilder()
 
 def main():
     if USE_CACHED_RESUME and Path(RESUME_JSON).exists():
@@ -102,9 +104,12 @@ def main():
         TAILOR_JSON
     )
     
-    print("Done!")
-
     print(tailored_resume.model_dump_json(indent=4))
+    
+    print("Building")
+    builder.build(resume, tailored_resume)
+    
+    print("Done!")
 
 if __name__ == "__main__":
     main()

@@ -20,6 +20,8 @@ class Resume(BaseModel):
     name: str
     email: str
     phone: str
+    linkedin: str
+    github: str
     education: list[Education]
     skills: list[str]
     work_experience: list[Experience]
