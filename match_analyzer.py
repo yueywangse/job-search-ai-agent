@@ -9,12 +9,7 @@ class MatchAnalyzer:
     def __init__(self):
         self.llm = LLM()
 
-    def analyze(
-        self,
-        resume,
-        job,
-        match
-    ) -> MatchAnalysis:
+    def analyze(self, resume, job, match) -> MatchAnalysis:
         prompt = MATCH_ANALYSIS_PROMPT.format(
             resume=resume.model_dump_json(indent=2),
             job=job.model_dump_json(indent=2),

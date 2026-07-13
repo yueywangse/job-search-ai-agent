@@ -8,11 +8,7 @@ class LLM:
     def __init__(self, model=OLLAMA_MODEL):
         self.model = model
 
-    def generate(
-        self,
-        prompt: str,
-        schema: Type[BaseModel] | None = None
-    ) -> str:
+    def generate(self, prompt: str, schema: Type[BaseModel] | None = None) -> str:
         kwargs = {
             "model": self.model,
             "messages": [

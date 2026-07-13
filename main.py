@@ -4,13 +4,14 @@ from resume_parser import ResumeParser
 from job_extractor import JobExtractor
 from skill_matcher import SkillMatcher
 from utils import save_json, get_job_description, print_match, print_analysis, save_analysis_markdown
-from config import RESUME_FILE, RESUME_JSON, MATCH_JSON, USE_CACHED_RESUME, ANALYZE_JSON, ANALYSIS_MD, TAILOR_JSON
+from config import RESUME_FILE, RESUME_JSON, MATCH_JSON, USE_CACHED_RESUME, ANALYZE_JSON, ANALYSIS_MD, TAILOR_JSON, COVER_LETTER_JSON
 from pathlib import Path
 from resume import Resume
 from utils import load_json
 from match_analyzer import MatchAnalyzer
 from resume_tailor import ResumeTailor
 from resume_builder import ResumeBuilder
+from cover_letter_generator import CoverLetterGenerator
 
 parser = ResumeParser()
 resume_extractor = ResumeExtractor()
@@ -19,6 +20,7 @@ matcher = SkillMatcher()
 analyzer = MatchAnalyzer()
 tailor = ResumeTailor()
 builder = ResumeBuilder()
+generator = CoverLetterGenerator()
 
 def main():
     if USE_CACHED_RESUME and Path(RESUME_JSON).exists():
@@ -91,7 +93,7 @@ def main():
         indent=2
     )
     
-    print("Tailoring")
+    print("Tailoring Resume")
     tailored_resume  = tailor.tailor(
         resume,
         job,
@@ -104,10 +106,24 @@ def main():
         TAILOR_JSON
     )
     
-    print(tailored_resume.model_dump_json(indent=4))
-    
-    print("Building")
+    print("Building Resume")
     builder.build(resume, tailored_resume)
+    
+    print("Generating Cover Letter")
+    cover_letter = generator.generate(
+        resume,
+        tailored_resume,
+        job,
+        tailor_context_json
+    )
+    
+    print("Saving...")
+    save_json(
+        cover_letter .model_dump(),
+        COVER_LETTER_JSON
+    )
+    
+    print(cover_letter.model_dump_json(indent=4))
     
     print("Done!")
 
