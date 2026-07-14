@@ -1,18 +1,35 @@
 import json
-from resume_extractor import ResumeExtractor
-from resume_parser import ResumeParser
-from job_extractor import JobExtractor
-from skill_matcher import SkillMatcher
-from utils import save_json, get_job_description, print_match, print_analysis, save_analysis_markdown
-from config import RESUME_FILE, RESUME_JSON, MATCH_JSON, USE_CACHED_RESUME, ANALYZE_JSON, ANALYSIS_MD, TAILOR_JSON, COVER_LETTER_JSON
 from pathlib import Path
-from resume import Resume
-from utils import load_json
-from match_analyzer import MatchAnalyzer
-from resume_tailor import ResumeTailor
-from resume_builder import ResumeBuilder
-from cover_letter_generator import CoverLetterGenerator
-from cover_letter_builder import CoverLetterBuilder
+
+from builders import CoverLetterBuilder, ResumeBuilder
+from config import (
+    ANALYSIS_MD,
+    ANALYZE_JSON,
+    COVER_LETTER_JSON,
+    MATCH_JSON,
+    RESUME_FILE,
+    RESUME_JSON,
+    TAILOR_JSON,
+    USE_CACHED_RESUME,
+)
+from models import Resume
+from services import (
+    CoverLetterGenerator,
+    JobExtractor,
+    MatchAnalyzer,
+    ResumeExtractor,
+    ResumeParser,
+    ResumeTailor,
+    SkillMatcher,
+)
+from utils import (
+    get_job_description,
+    load_json,
+    print_analysis,
+    print_match,
+    save_analysis_markdown,
+    save_json,
+)
 
 parser = ResumeParser()
 resume_extractor = ResumeExtractor()
@@ -24,111 +41,74 @@ resume_builder = ResumeBuilder()
 cover_letter_generator = CoverLetterGenerator()
 cover_letter_builder = CoverLetterBuilder()
 
-def main():
+def main() -> None:
+    """Run the end-to-end job application pipeline."""
+
     if USE_CACHED_RESUME and Path(RESUME_JSON).exists():
         print("Loading cached resume...")
 
-        resume = Resume.model_validate(
-            load_json(RESUME_JSON)
-        )
+        resume = Resume.model_validate(load_json(RESUME_JSON))
     else:
         print("Extracting resume...")
 
         resume_text = parser.extract_text(RESUME_FILE)
         resume = resume_extractor.extract(resume_text)
-        save_json(
-            resume.model_dump(),
-            RESUME_JSON
-        )
 
-    print("Resume analyzed successfully!")
-    print("Saved to outputs/resume.json")
-    
+        print("Saving resume...")
+        save_json(resume.model_dump(), RESUME_JSON)
+
     print("Getting job description...")
     job_text = get_job_description()
-    
+
     print("Extracting job...")
     job = job_extractor.extract(job_text)
-    
+
     print("Matching...")
-    result = matcher.match(
-        resume,
-        job
-    )
-    
-    print("Saving...")
-    save_json(
-        result.model_dump(),
-        MATCH_JSON
-    )
-    
+    result = matcher.match(resume, job)
+
+    print("Saving match...")
+    save_json(result.model_dump(), MATCH_JSON)
+
     print_match(result)
-    
-    print("Analyzing")
-    analysis = analyzer.analyze(
-        resume,
-        job,
-        result
-    )
-    
-    print("Saving...")
-    save_json(
-        analysis.model_dump(),
-        ANALYZE_JSON
-    )
-    
-    save_analysis_markdown(
-        analysis,
-        ANALYSIS_MD
-    )
-    
+
+    print("Analyzing...")
+    analysis = analyzer.analyze(resume, job, result)
+
+    print("Saving analysis...")
+    save_json(analysis.model_dump(), ANALYZE_JSON)
+
+    save_analysis_markdown(analysis, ANALYSIS_MD)
+
     print_analysis(analysis)
-    
+
     tailor_context = {
         "matching_skills": result.matching_skills,
         "missing_skills": result.missing_skills,
         "summary": analysis.summary,
     }
-    
-    tailor_context_json = json.dumps(
-        tailor_context,
-        indent=2
-    )
-    
-    print("Tailoring Resume")
-    tailored_resume  = resume_tailor.tailor(
-        resume,
-        job,
-        tailor_context_json
-    )
-    
-    print("Saving...")
-    save_json(
-        tailored_resume .model_dump(),
-        TAILOR_JSON
-    )
-    
-    print("Building Resume")
+
+    tailor_context_json = json.dumps(tailor_context, indent=2)
+
+    print("Tailoring resume...")
+    tailored_resume = resume_tailor.tailor(resume, job, tailor_context_json)
+
+    print("Saving tailored resume...")
+    save_json(tailored_resume.model_dump(), TAILOR_JSON)
+
+    print("Building resume...")
     resume_builder.build(resume, tailored_resume)
-    
-    print("Generating Cover Letter")
-    cover_letter = cover_letter_generator.generate(
-        resume,
-        tailored_resume,
-        job,
-        tailor_context_json
-    )
-    
-    print("Saving...")
-    save_json(
-        cover_letter .model_dump(),
-        COVER_LETTER_JSON
-    )
-    
-    print("Building Cover Letter")
+
+    print("Generating cover letter...")
+    cover_letter = cover_letter_generator.generate(resume, tailored_resume, job, tailor_context_json)
+
+    print("Saving cover letter...")
+    save_json(cover_letter.model_dump(), COVER_LETTER_JSON)
+
+    print("Building cover letter...")
     cover_letter_builder.build(resume, cover_letter)
-    
+
     print("Done!")
+
 
 if __name__ == "__main__":
     main()
