@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
-
 class MatchResult(BaseModel):
     """Results of matching a resume against a job description."""
 

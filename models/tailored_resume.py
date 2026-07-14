@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from .resume import Experience, Project
 
-
 class TailoredResume(BaseModel):
     """Tailored resume content generated for a specific job."""
 

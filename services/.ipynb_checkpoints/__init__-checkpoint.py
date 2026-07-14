@@ -12,6 +12,8 @@ from .resume_tailor import ResumeTailor
 
 from .cover_letter_generator import CoverLetterGenerator
 
+from .pipeline import ApplicationPipeline
+
 __all__ = [
     "LLM",
     "ResumeParser",
@@ -21,4 +23,5 @@ __all__ = [
     "MatchAnalyzer",
     "ResumeTailor",
     "CoverLetterGenerator",
+    "Pipeline"
 ]

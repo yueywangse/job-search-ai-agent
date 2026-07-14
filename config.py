@@ -15,5 +15,6 @@ TAILOR_JSON = f"{OUTPUT_DIR}/tailor.json"
 TAILOR_DOCX = f"{OUTPUT_DIR}/tailored_resume.docx"
 COVER_LETTER_JSON = f"{OUTPUT_DIR}/cover_letter.json"
 COVER_LETTER_DOCX = f"{OUTPUT_DIR}/cover_letter.docx"
+RESUME_HASH = f"{OUTPUT_DIR}/resume.hash"
 
 USE_CACHED_RESUME = True  # Set to false to override old resume.json

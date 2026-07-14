@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
-
 class Education(BaseModel):
     """An education entry on a resume."""
 
