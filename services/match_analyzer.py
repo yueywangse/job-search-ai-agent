@@ -2,6 +2,7 @@ from models import Job, MatchAnalysis, MatchResult, Resume
 from prompts import MATCH_ANALYSIS_PROMPT
 from services import LLM
 
+
 class MatchAnalyzer:
     """Analyze how well a resume matches a job description."""
 

@@ -6,6 +6,7 @@ INPUT_DIR = "data/resumes"
 OUTPUT_DIR = "data/output"
 
 RESUME_FILE = f"{INPUT_DIR}/resume.pdf"
+JOB_FILE = f"{INPUT_DIR}/job.txt"
 RESUME_JSON = f"{OUTPUT_DIR}/resume.json"
 MATCH_JSON = f"{OUTPUT_DIR}/match.json"
 ANALYZE_JSON = f"{OUTPUT_DIR}/analyze.json"
@@ -15,4 +16,4 @@ TAILOR_DOCX = f"{OUTPUT_DIR}/tailored_resume.docx"
 COVER_LETTER_JSON = f"{OUTPUT_DIR}/cover_letter.json"
 COVER_LETTER_DOCX = f"{OUTPUT_DIR}/cover_letter.docx"
 
-USE_CACHED_RESUME = True # Set to false to override old resume.json
+USE_CACHED_RESUME = True  # Set to false to override old resume.json

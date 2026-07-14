@@ -1,3 +1,6 @@
+from pathlib import Path
+from config import JOB_FILE
+
 def print_match(result):
     """Pretty-print the skill matching results."""
 
@@ -39,21 +42,9 @@ def print_analysis(analysis):
     print("\nResume Improvements:\n")
     for item in analysis.resume_improvements:
         print(f"- {item}")
-        
+
+
 def get_job_description():
-    """Read a multi-line job description from the terminal."""
+    """Load the job description from a text file."""
 
-    print("Paste the job description.")
-    print("Press Enter twice when finished.\n")
-
-    lines = []
-
-    while True:
-        line = input()
-
-        if line == "":
-            break
-
-        lines.append(line)
-
-    return "\n".join(lines)
+    return Path(JOB_FILE).read_text(encoding="utf-8")

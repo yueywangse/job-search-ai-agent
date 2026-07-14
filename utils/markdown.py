@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 def save_analysis_markdown(analysis, path):

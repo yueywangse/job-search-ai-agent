@@ -2,6 +2,7 @@ from models import Resume
 from prompts import RESUME_ANALYSIS_PROMPT
 from services import LLM
 
+
 class ResumeExtractor:
     """Extract structured resume information using an LLM."""
 

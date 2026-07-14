@@ -4,3 +4,15 @@ from .job import Job
 from .match import MatchResult
 from .resume import Education, Experience, Project, Resume
 from .tailored_resume import TailoredResume
+
+__all__ = [
+    "Resume",
+    "Education",
+    "Experience",
+    "Project",
+    "Job",
+    "MatchResult",
+    "MatchAnalysis",
+    "TailoredResume",
+    "CoverLetter",
+]

@@ -50,7 +50,9 @@ class ResumeBuilder:
         p = doc.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-        contact = p.add_run(f"{resume.email} | {resume.phone} | {resume.linkedin} | {resume.github}")
+        contact = p.add_run(
+            f"{resume.email} | {resume.phone} | {resume.linkedin} | {resume.github}"
+        )
         contact.font.size = Pt(10)
 
         p.paragraph_format.space_after = Pt(6)

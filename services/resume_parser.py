@@ -2,6 +2,7 @@ import re
 
 from pypdf import PdfReader
 
+
 class ResumeParser:
     """Extract plain text from a PDF resume."""
 

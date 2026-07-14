@@ -2,6 +2,7 @@ from models import Job
 from prompts import JOB_ANALYSIS_PROMPT
 from services import LLM
 
+
 class JobExtractor:
     """Extract structured job information from a job description."""
 

@@ -2,6 +2,7 @@ from models import Job, Resume, TailoredResume
 from prompts import RESUME_TAILOR_PROMPT
 from services import LLM
 
+
 class ResumeTailor:
     """Tailor a resume for a specific job using an LLM."""
 

@@ -41,6 +41,7 @@ resume_builder = ResumeBuilder()
 cover_letter_generator = CoverLetterGenerator()
 cover_letter_builder = CoverLetterBuilder()
 
+
 def main() -> None:
     """Run the end-to-end job application pipeline."""
 
@@ -99,7 +100,9 @@ def main() -> None:
     resume_builder.build(resume, tailored_resume)
 
     print("Generating cover letter...")
-    cover_letter = cover_letter_generator.generate(resume, tailored_resume, job, tailor_context_json)
+    cover_letter = cover_letter_generator.generate(
+        resume, tailored_resume, job, tailor_context_json
+    )
 
     print("Saving cover letter...")
     save_json(cover_letter.model_dump(), COVER_LETTER_JSON)
