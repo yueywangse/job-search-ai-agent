@@ -47,4 +47,9 @@ def print_analysis(analysis):
 def get_job_description():
     """Load the job description from a text file."""
 
-    return Path(JOB_FILE).read_text(encoding="utf-8")
+    job_file = Path(JOB_FILE)
+
+    if not job_file.exists():
+        raise FileNotFoundError(f"Job description not found: {job_file}")
+
+    return job_file.read_text(encoding="utf-8")

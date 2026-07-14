@@ -1,3 +1,4 @@
+from pathlib import Path
 import re
 
 from pypdf import PdfReader
@@ -8,6 +9,11 @@ class ResumeParser:
 
     def extract_text(self, pdf_path: str) -> str:
         """Extract and normalize text from a PDF resume."""
+
+        pdf_path = Path(pdf_path)
+
+        if not pdf_path.exists():
+            raise FileNotFoundError(f"Resume file not found: {pdf_path}")
 
         reader = PdfReader(pdf_path)
         pages = []
