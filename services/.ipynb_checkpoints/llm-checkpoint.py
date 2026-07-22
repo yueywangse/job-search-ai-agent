@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from config import OLLAMA_MODEL
 
+
 class LLM:
     """Wrapper around the Ollama chat API."""
 
@@ -14,7 +15,9 @@ class LLM:
 
         self.model = model
 
-    def generate(self, prompt: str, schema: Type[BaseModel] | None = None) -> str | BaseModel:
+    def generate(
+        self, prompt: str, schema: Type[BaseModel] | None = None
+    ) -> str | BaseModel:
         """Generate a response from the language model."""
 
         kwargs = {

@@ -2,13 +2,14 @@ from models import Job, MatchAnalysis, MatchResult, Resume
 from prompts import MATCH_ANALYSIS_PROMPT
 from services import LLM
 
+
 class MatchAnalyzer:
     """Analyze how well a resume matches a job description."""
 
-    def __init__(self):
+    def __init__(self, llm: LLM):
         """Initialize the match analyzer."""
 
-        self.llm = LLM()
+        self.llm = llm
 
     def analyze(self, resume: Resume, job: Job, match: MatchResult) -> MatchAnalysis:
         """Generate a detailed analysis of the resume-job match."""

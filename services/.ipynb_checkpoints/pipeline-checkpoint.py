@@ -1,11 +1,13 @@
-import json
-from pathlib import Path
 from collections.abc import Callable
+from pathlib import Path
 
+from agent import ApplicationAgent, AgentState
 from builders import CoverLetterBuilder, ResumeBuilder
 from config import RESUME_HASH, RESUME_JSON, USE_CACHED_RESUME
-from utils import file_hash, load_json, save_json
+from services import LLM
 from models import PipelineResult, Resume
+from utils import file_hash, load_json, save_json
+
 from .cover_letter_generator import CoverLetterGenerator
 from .job_extractor import JobExtractor
 from .match_analyzer import MatchAnalyzer
@@ -16,34 +18,75 @@ from .skill_matcher import SkillMatcher
 
 _RESUME_READ_PROGRESS = 5
 _RESUME_EXTRACT_PROGRESS = 15
-_JOB_EXTRACT_PROGRESS = 20
-_MATCH_PROGRESS = 40
-_ANALYSIS_PROGRESS = 60
-_TAILOR_PROGRESS = 80
-_COVER_LETTER_PROGRESS = 95
-_COMPLETE_PROGRESS = 100
+_DEFAULT_GOAL = "Tailor my resume and generate a cover letter."
 
 class ApplicationPipeline:
     """Run the end-to-end job application pipeline."""
-
+    
     def __init__(self) -> None:
         """Initialize the pipeline services."""
+        
+        self.llm = LLM()
 
         self.resume_parser = ResumeParser()
-        self.resume_extractor = ResumeExtractor()
-        self.job_extractor = JobExtractor()
-        self.skill_matcher = SkillMatcher()
-        self.match_analyzer = MatchAnalyzer()
-        self.resume_tailor = ResumeTailor()
-        self.cover_letter_generator = CoverLetterGenerator()
+        self.resume_extractor = ResumeExtractor(self.llm)
+
+        self.agent = ApplicationAgent(
+            llm=self.llm,
+            job_extractor=JobExtractor(self.llm),
+            skill_matcher=SkillMatcher(),
+            match_analyzer=MatchAnalyzer(self.llm),
+            resume_tailor=ResumeTailor(self.llm),
+            cover_letter_generator=CoverLetterGenerator(self.llm),
+        )
 
         self.resume_builder = ResumeBuilder()
         self.cover_letter_builder = CoverLetterBuilder()
+    
+    def create_session(
+        self,
+        resume: Resume,
+        job_text: str
+    ) -> AgentState:
+        """Create a new application session."""
+        
+        return AgentState(
+            goal=_DEFAULT_GOAL,
+            resume=resume,
+            job_text=job_text
+        )
+    
+    def chat(
+        self,
+        state: AgentState,
+        message: str,
+        progress_callback: Callable[[str, int], None] | None = None
+    ) -> PipelineResult:
+        """Process a user message and update the application state."""
+        
+        self.agent.run(
+            state=state,
+            user_message=message,
+            progress_callback=progress_callback
+        )
 
+        result = PipelineResult(
+            resume=state.resume,
+            job=state.job,
+            match=state.match,
+            analysis=state.analysis,
+            tailored_resume=state.tailored_resume,
+            cover_letter=state.cover_letter
+        )
+
+        self.build_documents(result)
+
+        return result
+        
     def load_resume(
         self,
         resume_path: str,
-        progress_callback: Callable[[str, int], None] | None = None,
+        progress_callback: Callable[[str, int], None] | None = None
     ) -> Resume:
         """Load a cached resume or extract a new one."""
 
@@ -81,73 +124,12 @@ class ApplicationPipeline:
         hash_file.write_text(resume_hash)
 
         return resume
-
-    def run(
-        self,
-        resume: Resume,
-        job_text: str,
-        progress_callback: Callable[[str, int], None] | None = None,
-    ) -> PipelineResult:
-        """Run the application pipeline."""
-            
-        self._progress(progress_callback, "Extracting job description...", _JOB_EXTRACT_PROGRESS)
-
-        print("Extracting job...")
-
-        job = self.job_extractor.extract(job_text)
-            
-        self._progress(progress_callback, "Matching skills...", _MATCH_PROGRESS)
-
-        print("Matching...")
-
-        match = self.skill_matcher.match(resume, job)
-            
-        self._progress(progress_callback, "Analyzing resume...", _ANALYSIS_PROGRESS)
-
-        print("Analyzing...")
-
-        analysis = self.match_analyzer.analyze(resume, job, match)
-
-        tailor_context = {
-            "matching_skills": match.matching_skills,
-            "missing_skills": match.missing_skills,
-            "summary": analysis.summary,
-        }
-
-        tailor_context_json = json.dumps(tailor_context, indent=2)
-            
-        self._progress(progress_callback, "Tailoring resume...", _TAILOR_PROGRESS)
-
-        print("Tailoring resume...")
-
-        tailored_resume = self.resume_tailor.tailor(resume, job, tailor_context_json)
-            
-        self._progress(progress_callback, "Generating cover letter...", _COVER_LETTER_PROGRESS)
-
-        print("Generating cover letter...")
-
-        cover_letter = self.cover_letter_generator.generate(resume, tailored_resume, job, tailor_context_json)
-
-        result = PipelineResult(
-            resume=resume,
-            job=job,
-            match=match,
-            analysis=analysis,
-            tailored_resume=tailored_resume,
-            cover_letter=cover_letter,
-        )
-
-        self.build_documents(result)
-            
-        self._progress(progress_callback, "Done!", _COMPLETE_PROGRESS)
-
-        return result
     
     def _progress(
         self,
         callback: Callable[[str, int], None] | None,
         message: str,
-        percent: int,
+        percent: int
     ) -> None:
         """Update the pipeline progress."""
 

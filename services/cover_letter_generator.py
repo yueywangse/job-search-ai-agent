@@ -6,10 +6,10 @@ from services import LLM
 class CoverLetterGenerator:
     """Generate a tailored cover letter using an LLM."""
 
-    def __init__(self):
+    def __init__(self, llm: LLM):
         """Initialize the cover letter generator."""
 
-        self.llm = LLM()
+        self.llm = llm
 
     def generate(
         self, resume: Resume, tailored_resume: TailoredResume, job: Job, analysis: str

@@ -5,7 +5,7 @@ from .session import clear_session
 def show_layout() -> None:
     """Render the application header."""
 
-    st.title("🤖 Job Search AI Agent")
+    st.title("Job Search AI Agent")
 
     st.caption(
         "Generate ATS-optimized resumes and personalized cover letters using a local LLM."
@@ -16,7 +16,7 @@ def show_layout() -> None:
     with left:
 
         if st.button(
-            "🗑️ Clear",
+            "Clear",
             use_container_width=True,
         ):
             clear_session()

@@ -6,10 +6,10 @@ from services import LLM
 class ResumeExtractor:
     """Extract structured resume information using an LLM."""
 
-    def __init__(self):
+    def __init__(self, llm: LLM):
         """Initialize the resume extractor."""
 
-        self.llm = LLM()
+        self.llm = llm
 
     def extract(self, resume_text: str) -> Resume:
         """Extract structured information from a resume."""
