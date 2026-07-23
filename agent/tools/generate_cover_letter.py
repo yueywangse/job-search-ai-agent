@@ -27,6 +27,9 @@ class GenerateCoverLetterTool(Tool):
         """Generate a cover letter."""
 
         context = state.tailor_context()
-        state.cover_letter = self.generator.generate(state.resume, state.tailored_resume, state.job, context)
+        state.cover_letter = self.generator.generate(state.resume, state.tailored_resume, state.job, context, state.cover_letter, state.latest_user_message())
         
-        return ("Cover Letter Generated")
+        return (
+            f"Generated a cover letter in response to the user's request "
+            f"'{state.latest_user_message()}'."
+        )

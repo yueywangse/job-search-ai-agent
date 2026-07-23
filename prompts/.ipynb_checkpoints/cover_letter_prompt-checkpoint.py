@@ -8,7 +8,7 @@ Follow the provided JSON schema exactly.
 Rules
 
 - Return only valid JSON.
-- Base everything on the supplied resume, job description, and match analysis.
+- Base everything on the supplied resume, tailored resume, job description, and match analysis.
 - Never invent or exaggerate experience, skills, accomplishments, or qualifications.
 - Do not claim experience that is not explicitly present.
 - Use the supplied match analysis to prioritize the candidate's most relevant experience and skills.
@@ -25,8 +25,8 @@ Rules
 - Avoid repeating the same accomplishments or skills across multiple paragraphs.
 - Write in a natural, confident, and professional tone.
 - Avoid generic phrases and unnecessary flattery.
-- Keep the cover letter between 250 and 350 words.
-- Write 3–4 concise body paragraphs.
+- Keep the cover letter between 250 and 350 words unless the latest user request explicitly asks for a different length.
+- Write 3–4 concise body paragraphs unless the latest user request requests otherwise.
 - Use the candidate's actual name from the supplied resume.
 - Do not use placeholders such as "[Your Name]".
 - Avoid subjective or promotional language such as "world-class", "highest standards", or "best-in-class".
@@ -34,7 +34,6 @@ Rules
 - Describe experience as transferable rather than directly applicable unless the resume explicitly demonstrates experience in that domain.
 - Treat all education exactly as presented in the supplied resume.
 - Do not describe completed degrees as "current" or "ongoing."
-- Describe experience as transferable rather than directly applicable unless the resume explicitly demonstrates experience in that domain.
 
 Resume
 
@@ -51,4 +50,31 @@ Job
 Match Analysis
 
 {analysis}
+
+Previous Cover Letter
+
+{previous_cover_letter}
+
+Latest User Request
+
+{user_request}
+
+Instructions
+
+If Previous Cover Letter is "None":
+
+- Generate a brand new cover letter tailored to the job.
+- Use the tailored resume as the primary source of resume content.
+
+Otherwise:
+
+- Revise the previous cover letter instead of writing a completely new one.
+- Preserve all previous improvements unless the user explicitly requests otherwise.
+- Modify only what is necessary to satisfy the latest user request.
+- Keep the existing structure, tone, and content whenever possible.
+- If the user asks for a longer or shorter letter, adjust the length while preserving the existing content.
+- If the user asks for a different tone or emphasis, revise only the relevant portions.
+- Do not remove important accomplishments unless the user explicitly requests it.
+
+Return only valid JSON matching the supplied schema.
 """

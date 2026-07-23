@@ -68,20 +68,48 @@ def show_results(result) -> None:
         st.write(result.analysis.summary)
 
     with resume_tab:
+        resume = result.tailored_resume
 
         st.subheader("Professional Summary")
+        st.write(resume.professional_summary)
 
-        st.write(
-            result.tailored_resume.professional_summary
-        )
+        st.divider()
 
         st.subheader("Skills")
+        st.write(" • ".join(resume.skills))
 
-        st.write(
-            ", ".join(
-                result.tailored_resume.skills
-            )
-        )
+        st.divider()
+
+        st.subheader("Experience")
+
+        for job in resume.work_experience:
+
+            st.markdown(f"### {job.title}")
+            st.write(f"*{job.company} | {job.location}*")
+            st.caption(job.dates)
+
+            for bullet in job.bullet_points:
+                st.markdown(f"- {bullet}")
+
+        st.divider()
+
+        st.subheader("Projects")
+
+        for project in resume.projects:
+
+            st.markdown(f"### {project.title}")
+
+            for bullet in project.bullet_points:
+                st.markdown(f"- {bullet}")
+
+        st.divider()
+
+        st.subheader("Education")
+
+        for education in result.resume.education:
+
+            st.markdown(f"**{education.degree}**")
+            st.write(f"{education.university} | {education.date}")
 
     with cover_tab:
 

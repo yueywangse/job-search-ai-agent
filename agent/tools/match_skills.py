@@ -20,4 +20,8 @@ class MatchSkillsTool(Tool):
 
         state.match = self.matcher.match(state.resume, state.job)
 
-        return ("Skilling matching completed")
+        return (
+            f"Compared the resume against the job description and "
+            f"generated a skill match analysis for the user's request: "
+            f"'{state.latest_user_message()}'."
+        )

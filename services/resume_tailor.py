@@ -11,13 +11,19 @@ class ResumeTailor:
 
         self.llm = llm
 
-    def tailor(self, resume: Resume, job: Job, analysis: str) -> TailoredResume:
+    def tailor(self, resume: Resume, job: Job, analysis: str, previous_tailored_resume: TailoredResume | None, user_request: str) -> TailoredResume:
         """Generate a tailored resume for the supplied job."""
 
         prompt = RESUME_TAILOR_PROMPT.format(
             resume=resume.model_dump_json(indent=2),
             job=job.model_dump_json(indent=2),
             analysis=analysis,
+            previous_tailored_resume=(
+                previous_tailored_resume.model_dump_json(indent=2)
+                if previous_tailored_resume
+                else "None"
+            ),
+            user_request=user_request
         )
 
         return self.llm.generate(prompt, schema=TailoredResume)

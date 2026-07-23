@@ -3,6 +3,7 @@ import logging
 from agent.planner import Planner
 from agent.registry import ToolRegistry
 from agent.state import AgentState
+from agent.decision import Decision
 from agent.tools import (
     AnalyzeResumeTool,
     ExtractJobTool,
@@ -24,26 +25,11 @@ from collections.abc import Callable
 logger = logging.getLogger(__name__)
 
 _PROGRESS = {
-    "extract_job": (
-        "Extracting job description...",
-        20,
-    ),
-    "match_skills": (
-        "Matching skills...",
-        40,
-    ),
-    "analyze_resume": (
-        "Analyzing resume...",
-        60,
-    ),
-    "tailor_resume": (
-        "Tailoring resume...",
-        80,
-    ),
-    "generate_cover_letter": (
-        "Generating cover letter...",
-        95,
-    ),
+    "extract_job": ("Extracted job description...", 20),
+    "match_skills": ("Matched skills...", 40),
+    "analyze_resume": ("Analyzed resume...", 60),
+    "tailor_resume": ("Tailored resume...", 80),
+    "generate_cover_letter": ("Generated cover letter...", 95)
 }
 
 class ApplicationAgent:
@@ -77,12 +63,17 @@ class ApplicationAgent:
     ) -> AgentState:
         """Execute the application agent."""
         
-        state.add_user_message(user_message)
-        
         max_steps = 2 * len(self.registry.list()) + 5
+        tools_executed_this_request = set()
 
         for step in range(max_steps):
             decision = self.planner.plan(state)
+            
+            if decision.tool in tools_executed_this_request:
+                decision = Decision(
+                    tool="finish",
+                    reason="The requested tool was just executed."
+                )
 
             logger.info(
                 "Step %d: Planner selected '%s' (%s)",
@@ -123,7 +114,7 @@ class ApplicationAgent:
 
             try:
                 summary = tool.run(state)
-            except Exception:
+            except Exception as exc:
                 logger.exception("Tool '%s' failed.", tool.name)
                 
                 state.add_tool_execution(
@@ -139,6 +130,8 @@ class ApplicationAgent:
                 reason=decision.reason,
                 result=summary
             )
+            
+            tools_executed_this_request.add(decision.tool)
             
             logger.info(
                 "Finished tool '%s'.",
