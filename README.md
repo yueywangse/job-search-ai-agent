@@ -144,16 +144,43 @@ job-search-ai-agent/
 │   └── tools/
 │
 ├── builders/
+│   ├── cover_letter_builder.py
+│   └── resume_builder.py
 │
 ├── models/
-│
-├── pipeline/
+│   ├── anaysis.py
+│   ├── cover_letter.py
+│   ├── job.py
+│   ├── match.py
+│   ├── pipeline_result.py
+│   ├── resume.py
+│   └── tailored_resume.py
 │
 ├── prompts/
+│   ├── cover_letter_prompt.py
+│   ├── job_prompt.py
+│   ├── match_prompt.py
+│   ├── resume_prompt.py
+│   └── tailor_prompt.py
 │
 ├── services/
+│   ├── cover_letter_generator.py
+│   ├── job_extractor.py
+│   ├── llm.py
+│   ├── match_analyzer.py
+│   ├── pipeline.py
+│   ├── resume_extractor.py
+│   ├── resume_parser.py
+│   ├── resume_tailor.py
+│   └── skill_matcher.py
 │
 ├── ui/
+│   ├── downloads.py
+│   ├── form.py
+│   ├── layout.py
+│   ├── results.py
+│   ├── session.py
+│   └── sidebar.py
 │
 ├── assets/
 │
