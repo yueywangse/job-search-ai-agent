@@ -2,32 +2,44 @@
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
+![Streamlit](https://img.shields.io/badge/UI-Streamlit-red)
 ![Pydantic](https://img.shields.io/badge/Pydantic-v2-red)
 ![Ollama](https://img.shields.io/badge/LLM-Ollama-purple)
 
-An AI-powered job application assistant that analyzes resumes and job descriptions, evaluates candidate fit, tailors resumes for specific roles, generates personalized, resume-grounded cover letters, and exports professional DOCX documents.
+An AI-powered conversational job application assistant that uses a modular LLM agent to analyze resumes, understand job descriptions, tailor resumes for specific roles, iteratively revise documents through natural language, generate personalized cover letters, and export professional DOCX documents.
 
-The project combines traditional software engineering with Large Language Models (LLMs) to automate the most time-consuming parts of the job application process while ensuring all generated content remains grounded in the candidate's actual experience.
+The application combines traditional software engineering principles with Large Language Models (LLMs) to automate the most time-consuming parts of the job application process while ensuring generated content remains grounded in the candidate's actual experience.
 
 ---
 
-## Features
+# Demo
 
-- Extract text from PDF resumes
-- Convert resumes into structured data using an LLM
-- Extract structured information from job descriptions
+<p align="center">
+    <img src="assets/demo.gif" width="100%">
+</p>
+
+---
+
+# Features
+
+- Upload PDF resumes
+- Extract structured resume information using an LLM
+- Parse job descriptions into structured data
 - Compare resume skills against job requirements
-- Analyze resume-job fit using an LLM
+- Analyze candidate strengths, weaknesses, and overall fit
 - Tailor resumes without inventing experience
+- Iteratively revise resumes through natural language conversation
 - Generate personalized, resume-grounded cover letters
-- Export professional resume and cover letter DOCX documents
-- Save intermediate JSON artifacts for transparency and debugging
+- Iteratively revise cover letters through conversation
+- Export professional DOCX resume and cover letter documents
+- Conversational Streamlit interface
+- Modular LLM agent with planning and tool execution
 
 ---
 
-## Architecture
+# Architecture
 
-The overall application pipeline is shown below.
+The overall application architecture is shown below.
 
 <p align="center">
     <img src="assets/architecture.png" width="100%">
@@ -35,9 +47,74 @@ The overall application pipeline is shown below.
 
 ---
 
-## Example Output
+# Agent Workflow
 
-### Tailored Resume
+The application processes each user request using a planning agent.
+
+```text
+User Request
+      │
+      ▼
+ Planner
+      │
+      ▼
+ Select Tool
+      │
+      ▼
+ Execute Tool
+      │
+      ▼
+ Update Agent State
+      │
+      ▼
+ Repeat Until Complete
+      │
+      ▼
+ Conversational Response
+```
+
+Depending on the user's request, the planner dynamically selects one or more tools, including:
+
+- Resume Extraction
+- Job Extraction
+- Skill Matching
+- Resume Analysis
+- Resume Tailoring
+- Cover Letter Generation
+
+This architecture allows the application to support conversational editing while maintaining a clean separation between planning, tool execution, and document generation.
+
+---
+
+# Example Conversation
+
+Example requests include:
+
+> Tailor my resume for this position.
+
+> Make my professional summary shorter.
+
+> Emphasize my machine learning experience.
+
+> Generate a cover letter.
+
+> Make the cover letter more enthusiastic.
+
+> Rewrite the second paragraph.
+
+---
+
+# Example Output
+
+## Streamlit Interface
+
+<p align="center">
+    <img src="assets/streamlit.png" width="95%">
+</p>
+
+---
+
+## Tailored Resume
 
 <p align="center">
     <img src="assets/resume.png" width="85%">
@@ -45,7 +122,7 @@ The overall application pipeline is shown below.
 
 ---
 
-### Generated Cover Letter
+## Generated Cover Letter
 
 <p align="center">
     <img src="assets/cover_letter.png" width="85%">
@@ -53,76 +130,39 @@ The overall application pipeline is shown below.
 
 ---
 
-### Pipeline Execution
-
-<p align="center">
-    <img src="assets/terminal.png" width="90%">
-</p>
-
----
-
-## Pipeline
-
-The application performs the following steps:
-
-1. Parse a PDF resume.
-2. Extract structured resume information using an LLM.
-3. Extract structured information from a job description.
-4. Compare resume skills against job requirements.
-5. Analyze candidate strengths, gaps, and overall match.
-6. Tailor the resume for the target role.
-7. Generate a personalized cover letter.
-8. Export both documents as professional DOCX files.
-
----
-
-## Project Structure
+# Project Structure
 
 ```text
 job-search-ai-agent/
 │
-├── assets/
-│   ├── architecture.png
-│   ├── cover_letter.png
-│   ├── resume.png
-│   └── terminal.png
+├── agent/
+│   ├── application_agent.py
+│   ├── planner.py
+│   ├── registry.py
+│   ├── responder.py
+│   ├── state.py
+│   └── tools/
 │
 ├── builders/
-│   ├── cover_letter_builder.py
-│   └── resume_builder.py
+│
+├── models/
+│
+├── pipeline/
+│
+├── prompts/
+│
+├── services/
+│
+├── ui/
+│
+├── assets/
 │
 ├── data/
 │   ├── input/
 │   └── output/
 │
-├── models/
-│   ├── analysis.py
-│   ├── cover_letter.py
-│   ├── job.py
-│   ├── match.py
-│   ├── resume.py
-│   └── tailored_resume.py
-│
-├── prompts/
-│   ├── cover_letter_prompt.py
-│   ├── job_prompt.py
-│   ├── match_prompt.py
-│   ├── resume_prompt.py
-│   └── tailor_prompt.py
-│
-├── services/
-│   ├── cover_letter_generator.py
-│   ├── job_extractor.py
-│   ├── llm.py
-│   ├── match_analyzer.py
-│   ├── resume_extractor.py
-│   ├── resume_parser.py
-│   ├── resume_tailor.py
-│   └── skill_matcher.py
-│
-├── utils/
+├── streamlit_app.py
 ├── config.py
-├── main.py
 ├── requirements.txt
 ├── LICENSE
 └── README.md
@@ -130,26 +170,40 @@ job-search-ai-agent/
 
 ---
 
-## Technologies
+# Technologies
 
-### AI
+## AI
 
 - Ollama
 - Qwen3 14B
 - Pydantic
 
-### Python
+## Backend
+
+- Python
+- Streamlit
+
+## Document Processing
 
 - PyPDF
 - python-docx
 
-### Development
+## Architecture
+
+- LLM Planning Agent
+- Tool Registry
+- Modular Service Layer
+- Stateful Conversation Management
+
+## Development
 
 - Ruff
+- Black
+- Pytest
 
 ---
 
-## Installation
+# Installation
 
 Clone the repository.
 
@@ -172,61 +226,80 @@ Pull the default model.
 ollama pull qwen3:14b
 ```
 
-Verify the model name in `config.py` if using a different model.
+If you use a different model, update the configuration accordingly.
 
 ---
 
-## Usage
+# Usage
 
-Place your input files in:
-
-```text
-data/input/
-├── resume.pdf
-└── job.txt
-```
-
-Run the application.
+Start the application.
 
 ```bash
-python main.py
+streamlit run streamlit_app.py
 ```
 
-The application generates:
+Upload:
 
-```text
-data/output/
-├── analysis.json
-├── analysis.md
-├── cover_letter.docx
-├── cover_letter.json
-├── match.json
-├── resume.json
-├── tailored_resume.docx
-└── tailored_resume.json
-```
+- A PDF resume
+- A job description
 
-Replace the example input files with your own resume and target job description to generate customized application materials.
+Then interact with the assistant through natural language.
+
+Examples:
+
+- Tailor my resume for this role.
+- Generate a cover letter.
+- Make the summary more concise.
+- Highlight my leadership experience.
+- Rewrite the cover letter to sound more confident.
+
+Generated documents can be downloaded directly from the application.
 
 ---
 
-## Future Improvements
+# How It Works
 
-- Streamlit web interface
-- Batch processing for multiple job postings
-- Interview question generation
+The application uses a modular planning agent to process each request.
+
+1. Parse the uploaded PDF resume.
+2. Extract structured resume information using an LLM.
+3. Extract structured information from the job description.
+4. Compare resume skills against job requirements.
+5. Analyze strengths, weaknesses, and overall fit.
+6. Tailor the resume.
+7. Generate or revise a cover letter.
+8. Export professional DOCX documents.
+9. Continue refining documents through conversation.
+
+---
+
+# Design Goals
+
+- Maintain factual consistency with the original resume
+- Never invent work experience or skills
+- Keep generated documents grounded in the candidate's background
+- Support iterative editing through conversation
+- Separate planning, tool execution, and document generation into modular components
+
+---
+
+# Future Improvements
+
+- Support additional LLM providers
 - Resume version comparison
 - ATS compatibility scoring
-- Application history dashboard
+- Interview question generation
+- Batch processing for multiple job descriptions
+- Application history and document management
 
 ---
 
-## Disclaimer
+# Disclaimer
 
 This project assists with resume tailoring and cover letter generation using Large Language Models. All generated documents should be reviewed before submitting job applications.
 
 ---
 
-## License
+# License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
