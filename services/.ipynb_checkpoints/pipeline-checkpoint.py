@@ -23,10 +23,10 @@ _DEFAULT_GOAL = "Tailor my resume and generate a cover letter."
 class ApplicationPipeline:
     """Run the end-to-end job application pipeline."""
     
-    def __init__(self) -> None:
+    def __init__(self, model: str = "qwen3:14b") -> None:
         """Initialize the pipeline services."""
-        
-        self.llm = LLM()
+
+        self.llm = LLM(model=model)
 
         self.resume_parser = ResumeParser()
         self.resume_extractor = ResumeExtractor(self.llm)

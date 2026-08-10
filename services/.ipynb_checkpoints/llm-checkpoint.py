@@ -1,22 +1,36 @@
 import json
 from typing import Type
 
-from ollama import chat
+from ollama import chat, list
 from pydantic import BaseModel
-
 from config import OLLAMA_MODEL
-
 
 class LLM:
     """Wrapper around the Ollama chat API."""
 
     def __init__(self, model: str = OLLAMA_MODEL):
         """Initialize the LLM client."""
-
+        
         self.model = model
 
+    def is_available(self) -> bool:
+        """Check whether the configured model is installed locally."""
+
+        try:
+            models = list()
+
+            return any(
+                model.model == self.model
+                for model in models.models
+            )
+
+        except Exception:
+            return False
+
     def generate(
-        self, prompt: str, schema: Type[BaseModel] | None = None
+        self,
+        prompt: str,
+        schema: Type[BaseModel] | None = None,
     ) -> str | BaseModel:
         """Generate a response from the language model."""
 

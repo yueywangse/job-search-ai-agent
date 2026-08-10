@@ -13,15 +13,36 @@ from ui import (
 
 st.set_page_config(
     page_title="Job Search AI Agent",
-    layout="wide",
+    layout="wide"
+)
+
+MODEL_OPTIONS = {
+    "qwen3:8b": "Qwen3 8B — Faster",
+    "qwen3:14b": "Qwen3 14B — Higher Quality"
+}
+
+model = st.sidebar.selectbox(
+    "LLM Model",
+    list(MODEL_OPTIONS.keys()),
+    format_func=lambda x: MODEL_OPTIONS[x]
 )
 
 @st.cache_resource
-def get_pipeline() -> ApplicationPipeline:
-    return ApplicationPipeline()
+def get_pipeline(model: str) -> ApplicationPipeline:
+    return ApplicationPipeline(model=model)
 
+pipeline = get_pipeline(model)
 
-pipeline = get_pipeline()
+if not pipeline.llm.is_available():
+    st.sidebar.error(
+        f"Model `{model}` is not installed in Ollama."
+    )
+
+    st.sidebar.code(
+        f"ollama pull {model}"
+    )
+
+    st.stop()
 
 if "agent_state" not in st.session_state:
     st.session_state.agent_state = None
@@ -33,10 +54,13 @@ show_sidebar()
 show_layout()
 
 if st.session_state.agent_state is None:
-    resume_file, job_description, initialize = show_form()
+    resume_bytes, resume_name, job_description, initialize = show_form(
+        existing_resume=st.session_state.get("resume_bytes"),
+        existing_resume_name=st.session_state.get("resume_filename")
+    )
 
     if initialize:
-        if resume_file is None:
+        if resume_bytes is None:
             st.error("Please upload a resume.")
             st.stop()
 
@@ -44,9 +68,12 @@ if st.session_state.agent_state is None:
             st.error("Please paste a job description.")
             st.stop()
 
+        st.session_state.resume_bytes = resume_bytes
+        st.session_state.resume_filename = resume_name
+
         temp_resume = Path("data/input/uploaded_resume.pdf")
         temp_resume.parent.mkdir(parents=True, exist_ok=True)
-        temp_resume.write_bytes(resume_file.getbuffer())
+        temp_resume.write_bytes(resume_bytes)
 
         progress = st.progress(0)
         status = st.empty()
@@ -97,7 +124,7 @@ if st.session_state.result is not None:
 
 if st.session_state.agent_state:
 
-    if st.sidebar.button("New Session", disabled="pending_prompt" in st.session_state):
+    if st.sidebar.button("New Job", disabled="pending_prompt" in st.session_state):
         st.session_state.agent_state = None
         st.session_state.result = None
         st.session_state.pop("resume_doc", None)
