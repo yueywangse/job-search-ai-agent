@@ -1,9 +1,11 @@
 import streamlit as st
 
+from pathlib import Path
 from ui.downloads import show_downloads
 from utils.resume_diff import get_resume_changes
+from config import COVER_LETTER_DOCX, TAILOR_DOCX
 
-def show_results(result) -> None:
+def show_results(result, pipeline) -> None:
     """Render the pipeline results."""
 
     st.success("Application documents generated successfully.")
@@ -63,7 +65,6 @@ def show_results(result) -> None:
     )
 
     with analysis_tab:
-
         st.subheader("Summary")
 
         st.write(result.analysis.summary)
@@ -95,6 +96,27 @@ def show_results(result) -> None:
         )
 
         st.subheader("Changes from Original Resume")
+        
+        if (
+            st.session_state.agent_state.tailored_resume is not None
+            and st.session_state.agent_state.previous_tailored_resume is not None
+        ):
+            if st.button("↩ Undo Last Resume Edit"):
+                result = pipeline.undo_resume(
+                    st.session_state.agent_state
+                )
+
+                st.session_state.result = result
+
+                tailored_resume = Path(TAILOR_DOCX)
+                if tailored_resume.exists():
+                    st.session_state.resume_doc = tailored_resume.read_bytes()
+
+                cover_letter = Path(COVER_LETTER_DOCX)
+                if cover_letter.exists():
+                    st.session_state.cover_letter_doc = cover_letter.read_bytes()
+
+                st.rerun()
 
         if total_changes:
             st.caption(f"{total_changes} change(s) from the original resume")
@@ -189,8 +211,28 @@ def show_results(result) -> None:
             st.write(f"{education.university} | {education.date}")
 
     with cover_tab:
-
         st.subheader("Cover Letter")
+        
+        if (
+            st.session_state.agent_state.cover_letter is not None
+            and st.session_state.agent_state.previous_cover_letter is not None
+        ):
+            if st.button("↩ Undo Last Cover Letter Edit"):
+                result = pipeline.undo_cover_letter(
+                    st.session_state.agent_state
+                )
+
+                st.session_state.result = result
+
+                tailored_resume = Path(TAILOR_DOCX)
+                if tailored_resume.exists():
+                    st.session_state.resume_doc = tailored_resume.read_bytes()
+
+                cover_letter = Path(COVER_LETTER_DOCX)
+                if cover_letter.exists():
+                    st.session_state.cover_letter_doc = cover_letter.read_bytes()
+
+                st.rerun()
 
         cover_letter = "\n\n".join(
             [

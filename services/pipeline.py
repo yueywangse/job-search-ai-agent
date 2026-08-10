@@ -141,3 +141,42 @@ class ApplicationPipeline:
 
         self.resume_builder.build(result.resume, result.tailored_resume)
         self.cover_letter_builder.build(result.resume, result.cover_letter)
+        
+    def undo_resume(self, state: AgentState) -> PipelineResult:
+        """Undo the last resume edit."""
+
+        if not state.undo_resume():
+            raise ValueError("No previous resume version available.")
+
+        result = PipelineResult(
+            resume=state.resume,
+            job=state.job,
+            match=state.match,
+            analysis=state.analysis,
+            tailored_resume=state.tailored_resume,
+            cover_letter=state.cover_letter
+        )
+
+        self.build_documents(result)
+
+        return result
+
+
+    def undo_cover_letter(self, state: AgentState) -> PipelineResult:
+        """Undo the last cover letter edit."""
+
+        if not state.undo_cover_letter():
+            raise ValueError("No previous cover letter version available.")
+
+        result = PipelineResult(
+            resume=state.resume,
+            job=state.job,
+            match=state.match,
+            analysis=state.analysis,
+            tailored_resume=state.tailored_resume,
+            cover_letter=state.cover_letter
+        )
+
+        self.build_documents(result)
+
+        return result

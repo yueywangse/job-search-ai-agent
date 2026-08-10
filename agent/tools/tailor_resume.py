@@ -22,11 +22,10 @@ class TailorResumeTool(Tool):
 
         context = state.tailor_context()
         
-        resume = (
-            state.tailored_resume
-            if state.tailored_resume is not None
-            else state.resume
-        )
+        if state.tailored_resume is not None:
+            state.previous_tailored_resume = state.tailored_resume
+        else:
+            state.previous_tailored_resume = None
 
         state.tailored_resume = self.tailor.tailor(state.resume, state.job, context, state.tailored_resume, state.latest_user_message())
         

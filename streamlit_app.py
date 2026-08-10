@@ -8,7 +8,7 @@ from ui import (
     show_form,
     show_layout,
     show_results,
-    show_sidebar,
+    show_sidebar
 )
 
 st.set_page_config(
@@ -120,7 +120,7 @@ if st.session_state.agent_state is None:
         st.rerun()
         
 if st.session_state.result is not None:
-    show_results(st.session_state.result)
+    show_results(st.session_state.result, pipeline)
 
 if st.session_state.agent_state:
 

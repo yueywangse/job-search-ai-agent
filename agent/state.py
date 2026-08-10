@@ -7,7 +7,8 @@ from models import (
     CoverLetter,
     Job,
     Resume,
-    MatchResult,
+    TailoredResume,
+    MatchResult
 )
 
 class ChatMessage(BaseModel):
@@ -32,8 +33,10 @@ class AgentState(BaseModel):
     job: Job | None = None
     match: MatchResult | None = None
     analysis: MatchAnalysis | None = None
-    tailored_resume: Resume | None = None
+    tailored_resume: TailoredResume | None = None
     cover_letter: CoverLetter | None = None
+    previous_tailored_resume: TailoredResume | None = None
+    previous_cover_letter: CoverLetter | None = None
     
     completed_tools: list[str] = Field(default_factory=list)
     tool_history: list[ToolExecution] = Field(default_factory=list)
@@ -134,3 +137,29 @@ class AgentState(BaseModel):
                 return message.content
 
         return None
+    
+    def undo_resume(self) -> bool:
+        """Restore the previous tailored resume."""
+
+        if self.previous_tailored_resume is None:
+            return False
+
+        current = self.tailored_resume
+
+        self.tailored_resume = self.previous_tailored_resume
+        self.previous_tailored_resume = current
+
+        return True
+    
+    def undo_cover_letter(self) -> bool:
+        """Restore the previous cover letter."""
+
+        if self.previous_cover_letter is None:
+            return False
+
+        current = self.cover_letter
+
+        self.cover_letter = self.previous_cover_letter
+        self.previous_cover_letter = current
+
+        return True

@@ -27,6 +27,12 @@ class GenerateCoverLetterTool(Tool):
         """Generate a cover letter."""
 
         context = state.tailor_context()
+        
+        if state.cover_letter is not None:
+            state.previous_cover_letter = state.cover_letter
+        else:
+            state.previous_cover_letter = None
+        
         state.cover_letter = self.generator.generate(state.resume, state.tailored_resume, state.job, context, state.cover_letter, state.latest_user_message())
         
         return (
