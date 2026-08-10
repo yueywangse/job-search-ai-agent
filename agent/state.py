@@ -8,7 +8,8 @@ from models import (
     Job,
     Resume,
     TailoredResume,
-    MatchResult
+    MatchResult,
+    InterviewQuestions
 )
 
 class ChatMessage(BaseModel):
@@ -37,6 +38,7 @@ class AgentState(BaseModel):
     cover_letter: CoverLetter | None = None
     previous_tailored_resume: TailoredResume | None = None
     previous_cover_letter: CoverLetter | None = None
+    interview_questions: InterviewQuestions | None = None
     
     completed_tools: list[str] = Field(default_factory=list)
     tool_history: list[ToolExecution] = Field(default_factory=list)
@@ -90,6 +92,8 @@ class AgentState(BaseModel):
             f"{', '.join(self.completed_tools) or 'None'}\n\n"
             f"Recent Tool Results:\n"
             f"{self.tool_history_text()}"
+            f"Interview Questions Generated: "
+            f"{'Yes' if self.interview_questions else 'No'}\n"
         )
     
     def complete_tool(self, tool_name: str) -> None:

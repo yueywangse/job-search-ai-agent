@@ -4,10 +4,11 @@ from pathlib import Path
 from agent import ApplicationAgent, AgentState
 from builders import CoverLetterBuilder, ResumeBuilder
 from config import RESUME_HASH, RESUME_JSON, USE_CACHED_RESUME
-from services import LLM
 from models import PipelineResult, Resume
 from utils import file_hash, load_json, save_json
 
+from .llm import LLM
+from .interview_question_generator import InterviewQuestionGenerator
 from .cover_letter_generator import CoverLetterGenerator
 from .job_extractor import JobExtractor
 from .match_analyzer import MatchAnalyzer
@@ -38,6 +39,7 @@ class ApplicationPipeline:
             match_analyzer=MatchAnalyzer(self.llm),
             resume_tailor=ResumeTailor(self.llm),
             cover_letter_generator=CoverLetterGenerator(self.llm),
+            interview_question_generator=InterviewQuestionGenerator(self.llm)
         )
 
         self.resume_builder = ResumeBuilder()
@@ -76,10 +78,15 @@ class ApplicationPipeline:
             match=state.match,
             analysis=state.analysis,
             tailored_resume=state.tailored_resume,
-            cover_letter=state.cover_letter
+            cover_letter=state.cover_letter,
+            interview_questions=state.interview_questions
         )
 
-        self.build_documents(result)
+        if (
+            "tailor_resume" in state.completed_tools
+            or "generate_cover_letter" in state.completed_tools
+        ):
+            self.build_documents(result)
 
         return result
         
@@ -154,7 +161,8 @@ class ApplicationPipeline:
             match=state.match,
             analysis=state.analysis,
             tailored_resume=state.tailored_resume,
-            cover_letter=state.cover_letter
+            cover_letter=state.cover_letter,
+            interview_questions=state.interview_questions
         )
 
         self.build_documents(result)
@@ -174,7 +182,8 @@ class ApplicationPipeline:
             match=state.match,
             analysis=state.analysis,
             tailored_resume=state.tailored_resume,
-            cover_letter=state.cover_letter
+            cover_letter=state.cover_letter,
+            interview_questions=state.interview_questions
         )
 
         self.build_documents(result)

@@ -5,6 +5,7 @@ from .match import MatchResult
 from .resume import Education, Experience, Project, Resume
 from .tailored_resume import TailoredResume
 from .pipeline_result import PipelineResult
+from .interview_questions import InterviewQuestions
 
 __all__ = [
     "Resume",
@@ -16,5 +17,6 @@ __all__ = [
     "MatchAnalysis",
     "TailoredResume",
     "CoverLetter",
-    "PipelineResult"
+    "PipelineResult",
+    "InterviewQuestions"
 ]

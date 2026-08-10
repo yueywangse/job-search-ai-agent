@@ -56,11 +56,12 @@ def show_results(result, pipeline) -> None:
 
     st.divider()
 
-    analysis_tab, resume_tab, cover_tab = st.tabs(
+    analysis_tab, resume_tab, cover_tab, interview_tab  = st.tabs(
         [
             "Analysis",
             "Resume",
-            "Cover Letter"
+            "Cover Letter",
+            "Interview Prep"
         ]
     )
 
@@ -245,6 +246,71 @@ def show_results(result, pipeline) -> None:
         )
 
         st.text(cover_letter)
+        
+    with interview_tab:
+        st.subheader("Interview Preparation")
+
+        if result.interview_questions is None:
+            st.info(
+                "No interview questions have been generated yet. "
+                "Ask the agent to generate interview questions."
+            )
+        else:
+            questions = result.interview_questions
+            
+            total_questions = (
+                len(questions.technical)
+                + len(questions.behavioral)
+                + len(questions.role_specific)
+            )
+
+            st.caption(f"{total_questions} questions generated")
+
+            st.markdown("### Technical Questions")
+
+            if questions.technical:
+                for i, question in enumerate(
+                    questions.technical,
+                    start=1,
+                ):
+                    with st.expander(
+                        f"{i}. {question}"
+                    ):
+                        st.write(question)
+            else:
+                st.write("No technical questions generated.")
+
+            st.divider()
+
+            st.markdown("### Behavioral Questions")
+
+            if questions.behavioral:
+                for i, question in enumerate(
+                    questions.behavioral,
+                    start=1,
+                ):
+                    with st.expander(
+                        f"{i}. {question}"
+                    ):
+                        st.write(question)
+            else:
+                st.write("No behavioral questions generated.")
+
+            st.divider()
+
+            st.markdown("### Role-Specific Questions")
+
+            if questions.role_specific:
+                for i, question in enumerate(
+                    questions.role_specific,
+                    start=1,
+                ):
+                    with st.expander(
+                        f"{i}. {question}"
+                    ):
+                        st.write(question)
+            else:
+                st.write("No role-specific questions generated.")
 
     st.divider()
 

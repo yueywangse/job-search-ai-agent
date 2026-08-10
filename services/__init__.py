@@ -14,6 +14,8 @@ from .cover_letter_generator import CoverLetterGenerator
 
 from .pipeline import ApplicationPipeline
 
+from .interview_question_generator import InterviewQuestionGenerator
+
 __all__ = [
     "LLM",
     "ResumeParser",
@@ -23,5 +25,6 @@ __all__ = [
     "MatchAnalyzer",
     "ResumeTailor",
     "CoverLetterGenerator",
-    "Pipeline"
+    "Pipeline",
+    "InterviewQuestionGenerator"
 ]

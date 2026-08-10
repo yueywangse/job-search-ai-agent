@@ -81,9 +81,11 @@ Tool History
 Planning Instructions
 ============================================================
 
-Think about ONLY the user's latest request.
+Use the latest user request to determine what the user wants, but also use the application goal and current application state to determine what workflow steps remain necessary.
 
-Use the previous conversation only for context.
+If the user asks to tailor their resume, treat that as a request to complete the resume tailoring workflow, including generating the cover letter afterward.
+
+If the user explicitly asks only for interview questions, generate interview questions without unnecessarily repeating resume or cover-letter work.
 
 Use the application state to determine what information already exists.
 
@@ -103,9 +105,12 @@ Do NOT repeatedly execute the same tool unless the latest user request explicitl
 
 A previous execution of a tool counts as satisfying that step unless there is evidence that it failed or the user explicitly requested another revision.
 
-If the latest user request has already been satisfied by the most recent tool execution, return:
+Return finish only when:
 
-finish
+- The user's request has been completed.
+- All required downstream steps for the requested workflow are complete.
+- No additional tool execution is necessary.
+- The next tool would only repeat completed work.
 
 ============================================================
 When to return finish
@@ -163,8 +168,59 @@ analyze_resume
 Decision:
 tailor_resume
 
-
 Example 5
+
+User:
+Tailor my resume.
+
+History:
+extract_job
+match_skills
+analyze_resume
+
+Decision:
+tailor_resume
+
+
+Example 6
+
+User:
+Tailor my resume.
+
+History:
+extract_job
+match_skills
+analyze_resume
+tailor_resume
+
+State:
+Resume Tailored: Yes
+Cover Letter Generated: No
+
+Decision:
+generate_cover_letter
+
+
+Example 7
+
+User:
+Tailor my resume.
+
+History:
+extract_job
+match_skills
+analyze_resume
+tailor_resume
+generate_cover_letter
+
+State:
+Resume Tailored: Yes
+Cover Letter Generated: Yes
+
+Decision:
+finish
+
+Example 8
 
 User:
 Generate a cover letter.
@@ -179,7 +235,7 @@ Decision:
 generate_cover_letter
 
 
-Example 6
+Example 9
 
 User:
 Make the professional summary stronger.
@@ -193,7 +249,7 @@ Decision:
 finish
 
 
-Example 7
+Example 10
 
 User:
 Can you explain why you changed my summary?
@@ -205,7 +261,7 @@ Decision:
 finish
 
 
-Example 8
+Example 11
 
 User:
 Generate another cover letter with a more formal tone.
@@ -215,6 +271,32 @@ generate_cover_letter
 
 Decision:
 generate_cover_letter
+
+Example 12
+
+User:
+Give me some interview questions.
+
+History:
+extract_job
+match_skills
+analyze_resume
+tailor_resume
+generate_cover_letter
+
+Decision:
+generate_interview_questions
+
+Example 13
+
+User:
+Give me some interview questions.
+
+History:
+generate_interview_questions
+
+Decision:
+finish
 
 ============================================================
 Output

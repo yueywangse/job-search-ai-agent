@@ -17,17 +17,38 @@ Truthfulness
 
 Tailoring
 ---------
-- Rewrite bullet points only by rephrasing, reordering, or emphasizing existing information.
-- Do not introduce terminology that implies experience the resume does not explicitly support.
-- Rewrite the professional summary only if doing so improves relevance to the target job or satisfies the latest user request. Otherwise preserve the original summary.
-- Reorder skills so the most relevant skills appear first unless the latest user request specifies otherwise.
-- Use the supplied match analysis to determine which existing experience and accomplishments should be emphasized.
-- Do not attempt to address resume gaps by inventing or implying experience that is not present.
-- Only rewrite sections when doing so improves relevance or satisfies the latest user request.
-- Leave already effective content unchanged.
-- Preserve the number of work experiences and projects. Do not remove or combine entries.
-- Preserve the original order of work experiences and projects unless reordering is explicitly requested.
-- When in doubt, preserve the original wording rather than making unnecessary changes.
+- Actively tailor the resume to the target job rather than making only
+  minimal edits.
+- Review EVERY work experience position and EVERY project for relevance
+  to the target job.
+- For relevant experience, rewrite the most relevant bullet points to
+  emphasize existing responsibilities, technologies, accomplishments,
+  and results that align with the job description.
+- For relevant projects, rewrite the most relevant bullet points to
+  emphasize existing technologies, methods, accomplishments, and
+  outcomes that align with the job description.
+- Use the match analysis to identify which existing experience and
+  accomplishments should receive greater emphasis.
+- Rephrase and reorganize existing information to improve relevance,
+  clarity, and ATS compatibility.
+- Do not merely reorder skills when relevant experience or projects
+  can also be meaningfully improved.
+- Rewrite the professional summary to target the job when appropriate.
+- Do not introduce terminology that implies experience the resume does
+  not explicitly support.
+- Never invent or exaggerate experience, projects, skills,
+  responsibilities, or accomplishments.
+- Never add technologies, metrics, responsibilities, or accomplishments
+  that are not supported by the original resume.
+- Preserve all companies, job titles, employment dates, education,
+  projects, and factual information.
+- Preserve the original meaning of every accomplishment.
+- Preserve quantified accomplishments and metrics.
+- Do not remove important accomplishments.
+- Preserve the number and order of work experiences and projects.
+- Only leave a section unchanged when its existing wording is already
+  well aligned with the target job or changing it would not improve
+  relevance.
 
 Resume Quality
 --------------
