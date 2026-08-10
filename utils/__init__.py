@@ -6,6 +6,8 @@ from .markdown import save_analysis_markdown
 
 from .hash import file_hash
 
+from .resume_diff import get_resume_changes
+
 __all__ = [
     "load_json",
     "save_json",
@@ -13,5 +15,6 @@ __all__ = [
     "get_job_description",
     "print_analysis",
     "print_match",
-    "file_hash"
+    "file_hash",
+    "get_resume_changes"
 ]

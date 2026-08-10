@@ -1,6 +1,7 @@
 import streamlit as st
 
 from ui.downloads import show_downloads
+from utils.resume_diff import get_resume_changes
 
 def show_results(result) -> None:
     """Render the pipeline results."""
@@ -16,19 +17,19 @@ def show_results(result) -> None:
     with col1:
         st.metric(
             "Overall Match",
-            f"{result.match.match_percentage:.1f}%",
+            f"{result.match.match_percentage:.1f}%"
         )
 
     with col2:
         st.metric(
             "Matching Skills",
-            len(result.match.matching_skills),
+            len(result.match.matching_skills)
         )
 
     with col3:
         st.metric(
             "Missing Skills",
-            len(result.match.missing_skills),
+            len(result.match.missing_skills)
         )
 
     st.divider()
@@ -38,7 +39,7 @@ def show_results(result) -> None:
     with left:
         with st.expander(
             "Matching Skills",
-            expanded=True,
+            expanded=True
         ):
             for skill in result.match.matching_skills:
                 st.markdown(f"- ✅ {skill}")
@@ -46,7 +47,7 @@ def show_results(result) -> None:
     with right:
         with st.expander(
             "Missing Skills",
-            expanded=True,
+            expanded=True
         ):
             for skill in result.match.missing_skills:
                 st.markdown(f"- ⚠️ {skill}")
@@ -57,7 +58,7 @@ def show_results(result) -> None:
         [
             "Analysis",
             "Resume",
-            "Cover Letter",
+            "Cover Letter"
         ]
     )
 
@@ -69,6 +70,82 @@ def show_results(result) -> None:
 
     with resume_tab:
         resume = result.tailored_resume
+        
+        changes = get_resume_changes(
+            result.resume,
+            result.tailored_resume
+        )
+        
+        changed_experience = [
+            item
+            for item in changes["experience"]
+            if item["changed"]
+        ]
+        
+        changed_projects = [
+            item
+            for item in changes["projects"]
+            if item["changed"]
+        ]
+
+        total_changes = (
+            int(changes["skills_changed"])
+            + len(changed_experience)
+            + len(changed_projects)
+        )
+
+        st.subheader("Changes from Original Resume")
+
+        if total_changes:
+            st.caption(f"{total_changes} change(s) from the original resume")
+
+            if changes["skills_changed"]:
+                st.markdown(
+                    "🟢 **Skills** — reordered"
+                )
+
+            if changed_experience:
+                st.markdown(
+                    f"🟢 **Experience** — "
+                    f"{len(changed_experience)} position(s) updated"
+                )
+
+            if changed_projects:
+                st.markdown(
+                    f"🟢 **Projects** — "
+                    f"{len(changed_projects)} project(s) updated"
+                )
+
+        else:
+            st.write("No changes were made to the resume.")
+
+        for item in changed_experience:
+            with st.expander(
+                f"{item['title']} — {item['company']}"
+            ):
+                st.markdown("🔵 **Original**")
+
+                for bullet in item["original_bullets"]:
+                    st.markdown(f"- {bullet}")
+
+                st.markdown("🟢 **Tailored**")
+
+                for bullet in item["tailored_bullets"]:
+                    st.markdown(f"- {bullet}")
+
+        for item in changed_projects:
+            with st.expander(item["title"]):
+                st.markdown("**Original**")
+
+                for bullet in item["original_bullets"]:
+                    st.markdown(f"- {bullet}")
+
+                st.markdown("**Tailored**")
+
+                for bullet in item["tailored_bullets"]:
+                    st.markdown(f"- {bullet}")
+
+        st.divider()
 
         st.subheader("Professional Summary")
         st.write(resume.professional_summary)
