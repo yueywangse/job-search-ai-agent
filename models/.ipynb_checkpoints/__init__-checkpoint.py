@@ -6,6 +6,7 @@ from .resume import Education, Experience, Project, Resume
 from .tailored_resume import TailoredResume
 from .pipeline_result import PipelineResult
 from .interview_questions import InterviewQuestions
+from .interview_answer import InterviewAnswer
 
 __all__ = [
     "Resume",
@@ -18,5 +19,6 @@ __all__ = [
     "TailoredResume",
     "CoverLetter",
     "PipelineResult",
-    "InterviewQuestions"
+    "InterviewQuestions",
+    "InterviewAnswer"
 ]

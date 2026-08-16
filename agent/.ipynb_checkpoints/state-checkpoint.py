@@ -9,7 +9,8 @@ from models import (
     Resume,
     TailoredResume,
     MatchResult,
-    InterviewQuestions
+    InterviewQuestions,
+    InterviewAnswer
 )
 
 class ChatMessage(BaseModel):
@@ -27,6 +28,7 @@ class AgentState(BaseModel):
     goal: str
 
     messages: list[ChatMessage] = Field(default_factory=list)
+    interview_answers: dict[str, InterviewAnswer] = Field(default_factory=dict)
 
     resume: Resume
     job_text: str
@@ -39,6 +41,7 @@ class AgentState(BaseModel):
     previous_tailored_resume: TailoredResume | None = None
     previous_cover_letter: CoverLetter | None = None
     interview_questions: InterviewQuestions | None = None
+    pending_interview_question: str | None = None
     
     completed_tools: list[str] = Field(default_factory=list)
     tool_history: list[ToolExecution] = Field(default_factory=list)

@@ -4,6 +4,7 @@ from .analyze_resume import AnalyzeResumeTool
 from .tailor_resume import TailorResumeTool
 from .generate_cover_letter import GenerateCoverLetterTool
 from .generate_interview_questions import GenerateInterviewQuestionsTool
+from .generate_interview_answer import GenerateInterviewAnswerTool
 
 __all__ = [
     "ExtractJobTool",
@@ -11,5 +12,6 @@ __all__ = [
     "AnalyzeResumeTool",
     "TailorResumeTool",
     "GenerateCoverLetterTool",
-    "GenerateInterviewQuestionsTool"
+    "GenerateInterviewQuestionsTool",
+    "GenerateInterviewAnswerTool"
 ]

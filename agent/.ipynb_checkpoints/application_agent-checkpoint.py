@@ -9,6 +9,7 @@ from agent.tools import (
     ExtractJobTool,
     GenerateCoverLetterTool,
     GenerateInterviewQuestionsTool,
+    GenerateInterviewAnswerTool,
     MatchSkillsTool,
     TailorResumeTool
 )
@@ -16,6 +17,7 @@ from agent.responder import Responder
 from services.llm import LLM
 from services.cover_letter_generator import CoverLetterGenerator
 from services.interview_question_generator import InterviewQuestionGenerator
+from services.interview_answer_generator import InterviewAnswerGenerator
 from services.job_extractor import JobExtractor
 from services.match_analyzer import MatchAnalyzer
 from services.resume_tailor import ResumeTailor
@@ -30,7 +32,8 @@ _PROGRESS = {
     "analyze_resume": ("Analyzed resume...", 60),
     "tailor_resume": ("Tailored resume...", 80),
     "generate_cover_letter": ("Generated cover letter...", 95),
-    "generate_interview_questions": ("Generated interview questions...", 95)
+    "generate_interview_questions": ("Generated interview questions...", 95),
+    "generate_interview_answer": ("Generated interview answer...", 95)
 }
 
 class ApplicationAgent:
@@ -44,7 +47,8 @@ class ApplicationAgent:
         match_analyzer: MatchAnalyzer,
         resume_tailor: ResumeTailor,
         cover_letter_generator: CoverLetterGenerator,
-        interview_question_generator: InterviewQuestionGenerator
+        interview_question_generator: InterviewQuestionGenerator,
+        interview_answer_generator: InterviewAnswerGenerator
     ) -> None:
         self.registry = self._create_registry(
             job_extractor,
@@ -52,7 +56,8 @@ class ApplicationAgent:
             match_analyzer,
             resume_tailor,
             cover_letter_generator,
-            interview_question_generator
+            interview_question_generator,
+            interview_answer_generator
         )
 
         self.planner = Planner(llm=llm, registry=self.registry)
@@ -152,7 +157,8 @@ class ApplicationAgent:
         match_analyzer: MatchAnalyzer,
         resume_tailor: ResumeTailor,
         cover_letter_generator: CoverLetterGenerator,
-        interview_question_generator: InterviewQuestionGenerator
+        interview_question_generator: InterviewQuestionGenerator,
+        interview_answer_generator: InterviewAnswerGenerator
     ) -> ToolRegistry:
         """Create the tool registry."""
 
@@ -164,5 +170,6 @@ class ApplicationAgent:
         registry.register(TailorResumeTool(resume_tailor))
         registry.register(GenerateCoverLetterTool(cover_letter_generator))
         registry.register(GenerateInterviewQuestionsTool(interview_question_generator))
+        registry.register(GenerateInterviewAnswerTool(interview_answer_generator))
 
         return registry

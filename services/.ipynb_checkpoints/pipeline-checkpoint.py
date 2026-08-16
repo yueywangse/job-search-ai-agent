@@ -9,6 +9,7 @@ from utils import file_hash, load_json, save_json
 
 from .llm import LLM
 from .interview_question_generator import InterviewQuestionGenerator
+from .interview_answer_generator import InterviewAnswerGenerator
 from .cover_letter_generator import CoverLetterGenerator
 from .job_extractor import JobExtractor
 from .match_analyzer import MatchAnalyzer
@@ -39,7 +40,8 @@ class ApplicationPipeline:
             match_analyzer=MatchAnalyzer(self.llm),
             resume_tailor=ResumeTailor(self.llm),
             cover_letter_generator=CoverLetterGenerator(self.llm),
-            interview_question_generator=InterviewQuestionGenerator(self.llm)
+            interview_question_generator=InterviewQuestionGenerator(self.llm),
+            interview_answer_generator=InterviewAnswerGenerator(self.llm)
         )
 
         self.resume_builder = ResumeBuilder()

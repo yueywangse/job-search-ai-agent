@@ -257,7 +257,7 @@ def show_results(result, pipeline) -> None:
             )
         else:
             questions = result.interview_questions
-            
+
             total_questions = (
                 len(questions.technical)
                 + len(questions.behavioral)
@@ -266,51 +266,27 @@ def show_results(result, pipeline) -> None:
 
             st.caption(f"{total_questions} questions generated")
 
-            st.markdown("### Technical Questions")
-
-            if questions.technical:
-                for i, question in enumerate(
-                    questions.technical,
-                    start=1,
-                ):
-                    with st.expander(
-                        f"{i}. {question}"
-                    ):
-                        st.write(question)
-            else:
-                st.write("No technical questions generated.")
+            show_interview_questions(
+                "Technical Questions",
+                questions.technical,
+                "technical",
+            )
 
             st.divider()
 
-            st.markdown("### Behavioral Questions")
-
-            if questions.behavioral:
-                for i, question in enumerate(
-                    questions.behavioral,
-                    start=1,
-                ):
-                    with st.expander(
-                        f"{i}. {question}"
-                    ):
-                        st.write(question)
-            else:
-                st.write("No behavioral questions generated.")
+            show_interview_questions(
+                "Behavioral Questions",
+                questions.behavioral,
+                "behavioral",
+            )
 
             st.divider()
 
-            st.markdown("### Role-Specific Questions")
-
-            if questions.role_specific:
-                for i, question in enumerate(
-                    questions.role_specific,
-                    start=1,
-                ):
-                    with st.expander(
-                        f"{i}. {question}"
-                    ):
-                        st.write(question)
-            else:
-                st.write("No role-specific questions generated.")
+            show_interview_questions(
+                "Role-Specific Questions",
+                questions.role_specific,
+                "role_specific",
+            )
 
     st.divider()
 
@@ -318,3 +294,61 @@ def show_results(result, pipeline) -> None:
         st.session_state["resume_doc"],
         st.session_state["cover_letter_doc"],
     )
+    
+def show_interview_questions(
+    title: str,
+    questions: list[str],
+    category: str,
+) -> None:
+    st.markdown(f"### {title}")
+
+    if not questions:
+        st.write(f"No {title.lower()} generated.")
+        return
+
+    for i, question in enumerate(questions, start=1):
+
+        with st.expander(f"{i}. {question}"):
+
+            answer = (
+                st.session_state.agent_state
+                .interview_answers
+                .get(question)
+            )
+
+            if answer is not None:
+                st.markdown("**Suggested Answer**")
+                st.write(answer.answer)
+
+            else:
+                generating_key = f"generating_{category}_{i}"
+
+                if st.session_state.get(generating_key, False):
+                    st.button(
+                        "⏳ Generating Answer...",
+                        key=f"answer_{category}_{i}",
+                        disabled=True,
+                    )
+                else:
+                    if st.button(
+                        "Generate Answer",
+                        key=f"answer_{category}_{i}",
+                    ):
+                        st.session_state[generating_key] = True
+
+                        st.session_state.agent_state.pending_interview_question = (
+                            question
+                        )
+
+                        prompt = (
+                            "Generate a personalized interview answer "
+                            "for the following interview question:\n\n"
+                            f"{question}"
+                        )
+
+                        st.session_state.agent_state.add_user_message(
+                            prompt
+                        )
+
+                        st.session_state.pending_prompt = prompt
+                        st.rerun()
