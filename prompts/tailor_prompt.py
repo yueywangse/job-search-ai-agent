@@ -49,6 +49,23 @@ Tailoring
 - Only leave a section unchanged when its existing wording is already
   well aligned with the target job or changing it would not improve
   relevance.
+  
+Change Explanations
+-------------------
+- For EVERY work experience position that is meaningfully changed,
+  create one change_reasons entry.
+- For EVERY project that is meaningfully changed, create one
+  change_reasons entry.
+- Do not omit projects simply because work experience was also changed.
+- Use `section = "work_experience"` for work experience.
+- Use `section = "project"` for projects.
+- For work experience, `item` must be exactly the company name,
+  followed by " - ", followed by the job title.
+- For projects, `item` must be exactly the project title.
+- Only create a reason when the corresponding experience or project
+  was actually changed.
+- Each reason must explain how the changes improve relevance to the
+  target job.
 
 Resume Quality
 --------------
@@ -99,6 +116,18 @@ Otherwise:
 - Leave unrelated sections unchanged.
 - Do not undo previous improvements.
 - Continue to follow all truthfulness, tailoring, and resume quality rules above.
+
+Output Requirements
+-------------------
+- Return the tailored resume using the supplied schema.
+- Populate change_reasons for every meaningfully changed experience
+  position or project.
+- The `item` field should identify the specific position or project.
+- Do not create change_reasons entries for unchanged positions or
+  projects.
+- Each reason should explain why the change makes the resume more
+  relevant to the target job.
+- Do not include information that is not supported by the resume.
 
 Return only valid JSON matching the supplied schema.
 """

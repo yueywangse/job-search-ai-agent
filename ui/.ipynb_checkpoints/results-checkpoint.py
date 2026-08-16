@@ -155,6 +155,10 @@ def show_results(result, pipeline) -> None:
 
                 for bullet in item["tailored_bullets"]:
                     st.markdown(f"- {bullet}")
+                    
+                if item["reason"]:
+                    st.markdown("💡 **Why this changed**")
+                    st.write(item["reason"])
 
         for item in changed_projects:
             with st.expander(item["title"]):
@@ -167,6 +171,10 @@ def show_results(result, pipeline) -> None:
 
                 for bullet in item["tailored_bullets"]:
                     st.markdown(f"- {bullet}")
+                    
+                if item["reason"]:
+                    st.markdown("💡 **Why this changed**")
+                    st.write(item["reason"])
 
         st.divider()
 

@@ -29,39 +29,48 @@ def get_resume_changes(
         "projects": []
     }
 
+    # Build lookup tables for LLM-generated explanations
+    experience_reasons = {
+        reason.item: reason.reason
+        for reason in tailored.change_reasons
+        if reason.section == "work_experience"
+    }
+
+    project_reasons = {
+        reason.item: reason.reason
+        for reason in tailored.change_reasons
+        if reason.section == "project"
+    }
+
     for original_job, tailored_job in zip(
         original.work_experience,
-        tailored.work_experience
+        tailored.work_experience,
     ):
-        changed_bullets = count_changed_items(
-            original_job.bullet_points,
-            tailored_job.bullet_points
-        )
+        changed_bullets = (original_job.bullet_points != tailored_job.bullet_points)
+
+        experience_key = (f"{tailored_job.company} - {tailored_job.title}")
 
         changes["experience"].append({
             "title": tailored_job.title,
             "company": tailored_job.company,
-            "changed": changed_bullets > 0,
-            "changed_bullets": changed_bullets,
+            "changed": changed_bullets,
             "original_bullets": original_job.bullet_points,
-            "tailored_bullets": tailored_job.bullet_points
-        })
+            "tailored_bullets": tailored_job.bullet_points,
+            "reason": experience_reasons.get(experience_key, "")
+    })
 
     for original_project, tailored_project in zip(
         original.projects,
         tailored.projects
     ):
-        changed_bullets = count_changed_items(
-            original_project.bullet_points,
-            tailored_project.bullet_points
-        )
+        changed_bullets = (original_project.bullet_points != tailored_project.bullet_points)
 
         changes["projects"].append({
             "title": tailored_project.title,
-            "changed": changed_bullets > 0,
-            "changed_bullets": changed_bullets,
+            "changed": changed_bullets,
             "original_bullets": original_project.bullet_points,
-            "tailored_bullets": tailored_project.bullet_points
+            "tailored_bullets": tailored_project.bullet_points,
+            "reason": project_reasons.get(tailored_project.title, "")
         })
 
     return changes

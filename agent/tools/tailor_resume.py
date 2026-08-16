@@ -29,4 +29,14 @@ class TailorResumeTool(Tool):
 
         state.tailored_resume = self.tailor.tailor(state.resume, state.job, context, state.tailored_resume, state.latest_user_message())
         
+        print("CHANGE REASONS:")
+        for reason in state.tailored_resume.change_reasons:
+            print(
+                reason.section,
+                "|",
+                reason.item,
+                "|",
+                reason.reason,
+            )
+        
         return f"Resume tailored based on user request: {state.latest_user_message()}"
