@@ -8,6 +8,11 @@ from .resume import Resume
 from .tailored_resume import TailoredResume
 from .interview_questions import InterviewQuestions
 
+class KeywordCoverage(BaseModel):
+    percentage: float
+    covered: list[str]
+    missing: list[str]
+
 class PipelineResult(BaseModel):
     """Results produced by the end-to-end application pipeline."""
 
@@ -21,5 +26,5 @@ class PipelineResult(BaseModel):
     
     original_match: MatchResult | None = None
     tailored_match: MatchResult | None = None
-    original_coverage: float | None = None
-    tailored_coverage: float | None = None
+    original_coverage: KeywordCoverage | None = None
+    tailored_coverage: KeywordCoverage | None = None

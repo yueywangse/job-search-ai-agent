@@ -216,16 +216,28 @@ class ApplicationPipeline:
     def calculate_keyword_coverage(
         resume: Resume,
         job: Job
-    ) -> float:
+    ) -> dict:
+        """Calculate job skill coverage across the entire resume."""
+
         resume_text = resume.model_dump_json().lower()
 
-        if not job.required_skills:
-            return 100.0
+        covered = []
+        missing = []
 
-        matched = sum(
-            1
-            for skill in job.required_skills
-            if skill.lower() in resume_text
+        for skill in job.required_skills:
+            if skill.lower() in resume_text:
+                covered.append(skill)
+            else:
+                missing.append(skill)
+
+        coverage = (
+            100.0
+            if not job.required_skills
+            else round(len(covered) / len(job.required_skills) * 100, 1)
         )
 
-        return round(matched / len(job.required_skills) * 100, 1)
+        return {
+            "percentage": coverage,
+            "covered": covered,
+            "missing": missing
+        }
