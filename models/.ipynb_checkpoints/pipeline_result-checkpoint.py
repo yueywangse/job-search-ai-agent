@@ -18,3 +18,8 @@ class PipelineResult(BaseModel):
     tailored_resume: TailoredResume
     cover_letter: CoverLetter | None = None
     interview_questions: InterviewQuestions | None = None
+    
+    original_match: MatchResult | None = None
+    tailored_match: MatchResult | None = None
+    original_coverage: float | None = None
+    tailored_coverage: float | None = None

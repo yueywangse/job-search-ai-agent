@@ -53,8 +53,62 @@ def show_results(result, pipeline) -> None:
         ):
             for skill in result.match.missing_skills:
                 st.markdown(f"- ⚠️ {skill}")
-
+    
     st.divider()
+
+    st.subheader("Skill Match")
+
+    if (result.original_match is not None and result.tailored_match is not None):
+        original_score = result.original_match.match_percentage
+        tailored_score = result.tailored_match.match_percentage
+        improvement = tailored_score - original_score
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.metric(
+                "Original Resume",
+                f"{original_score:.1f}%"
+            )
+
+        with col2:
+            st.metric(
+                "Tailored Resume",
+                f"{tailored_score:.1f}%",
+                delta=f"{improvement:+.1f}%"
+            )
+
+        with col3:
+            st.metric(
+                "Improvement",
+                f"{improvement:+.1f}%"
+            )
+            
+    if (result.original_coverage is not None and result.tailored_coverage is not None):
+        original_coverage = result.original_coverage
+        tailored_coverage = result.tailored_coverage
+        improvement = tailored_coverage - original_coverage
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.metric(
+                "Original Resume",
+                f"{original_coverage:.1f}%"
+            )
+
+        with col2:
+            st.metric(
+                "Tailored Resume",
+                f"{tailored_coverage:.1f}%",
+                delta=f"{improvement:+.1f}%"
+            )
+
+        with col3:
+            st.metric(
+                "Improvement",
+                f"{improvement:+.1f}%"
+            )
 
     analysis_tab, resume_tab, cover_tab, interview_tab  = st.tabs(
         [

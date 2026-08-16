@@ -4,7 +4,7 @@ from pathlib import Path
 from agent import ApplicationAgent, AgentState
 from builders import CoverLetterBuilder, ResumeBuilder
 from config import RESUME_HASH, RESUME_JSON, USE_CACHED_RESUME
-from models import PipelineResult, Resume
+from models import PipelineResult, Resume, Job
 from utils import file_hash, load_json, save_json
 
 from .llm import LLM
@@ -32,11 +32,12 @@ class ApplicationPipeline:
 
         self.resume_parser = ResumeParser()
         self.resume_extractor = ResumeExtractor(self.llm)
+        self.skill_matcher = SkillMatcher()
 
         self.agent = ApplicationAgent(
             llm=self.llm,
             job_extractor=JobExtractor(self.llm),
-            skill_matcher=SkillMatcher(),
+            skill_matcher=self.skill_matcher,
             match_analyzer=MatchAnalyzer(self.llm),
             resume_tailor=ResumeTailor(self.llm),
             cover_letter_generator=CoverLetterGenerator(self.llm),
@@ -73,6 +74,24 @@ class ApplicationPipeline:
             user_message=message,
             progress_callback=progress_callback
         )
+        
+        original_match = None
+        tailored_match = None
+
+        if state.resume is not None and state.job is not None:
+            original_match = self.skill_matcher.match(state.resume, state.job)
+
+        if state.tailored_resume is not None and state.job is not None:
+            tailored_match = self.skill_matcher.match(state.tailored_resume, state.job)
+            
+        original_coverage = None
+        tailored_coverage = None
+
+        if state.job is not None:
+            original_coverage = self.calculate_keyword_coverage(state.resume, state.job)
+
+            if state.tailored_resume is not None:
+                tailored_coverage = self.calculate_keyword_coverage(state.tailored_resume, state.job)
 
         result = PipelineResult(
             resume=state.resume,
@@ -81,13 +100,14 @@ class ApplicationPipeline:
             analysis=state.analysis,
             tailored_resume=state.tailored_resume,
             cover_letter=state.cover_letter,
-            interview_questions=state.interview_questions
+            interview_questions=state.interview_questions,
+            original_match=original_match,
+            tailored_match=tailored_match,
+            original_coverage=original_coverage,
+            tailored_coverage=tailored_coverage
         )
 
-        if (
-            "tailor_resume" in state.completed_tools
-            or "generate_cover_letter" in state.completed_tools
-        ):
+        if ("tailor_resume" in state.completed_tools or "generate_cover_letter" in state.completed_tools):
             self.build_documents(result)
 
         return result
@@ -191,3 +211,21 @@ class ApplicationPipeline:
         self.build_documents(result)
 
         return result
+    
+    @staticmethod
+    def calculate_keyword_coverage(
+        resume: Resume,
+        job: Job
+    ) -> float:
+        resume_text = resume.model_dump_json().lower()
+
+        if not job.required_skills:
+            return 100.0
+
+        matched = sum(
+            1
+            for skill in job.required_skills
+            if skill.lower() in resume_text
+        )
+
+        return round(matched / len(job.required_skills) * 100, 1)
